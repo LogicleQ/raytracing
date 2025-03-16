@@ -6,6 +6,9 @@
 
 #include <SDL3/SDL.h>
 
+extern uint32_t win_width;
+extern uint32_t win_height;
+
 class RT
 {
 
@@ -51,6 +54,9 @@ namespace obj
 	float O1_z (float x, float y, float z);
 }
 
+
+const double pi = 3.1415926535897932;
+
 namespace calc
 {
 
@@ -80,20 +86,41 @@ namespace calc
 
 
 
-	extern vec3 operator + (vec3 vec1, vec3 vec2);
-	extern vec3 operator - (vec3 vec1, vec3 vec2);
-	extern vec3 operator * (vec3 vec, float sc);
-	extern vec3 operator * (float sc, vec3 vec);
-	extern vec3 operator / (vec3 vec, float sc);
+	vec3 operator + (vec3 vec1, vec3 vec2);
+	vec3 operator - (vec3 vec1, vec3 vec2);
+	vec3 operator * (vec3 vec, float sc);
+	vec3 operator * (float sc, vec3 vec);
+	vec3 operator / (vec3 vec, float sc);
+
+	p3 operator + (p3 pt, vec3 vec);
+	p3 operator - (p3 pt, vec3 vec);
 
 
+
+	float mod (float a, float b);
 
 	vec3 unitVec (float theta, float phi);
 	vec3 unitVec (vec3 from);
 
 	float magnitude (vec3 vec);
 
-	p3 cast (p3 point, vec3 direction, bool doBinSearch);
+	float thetaGet (vec3 vec);
+	float phiGet (vec3 vec);
+
+	extern float castIncLen;
+	extern float castMaxLen;
+
+	float coordNorm_horiz (uint32_t coord);
+	float coordNorm_vert (uint32_t coord);
+
+	struct intersect
+	{
+		bool defined;
+		p3 point;
+		size_t objIndex;
+	};
+
+	intersect cast (p3 point, vec3 direction, bool doBinSearch);
 
 };
 

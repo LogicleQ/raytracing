@@ -4,53 +4,23 @@
 
 using calc::p3;
 using calc::vec3;
+using calc::intersect;
 
 
 
-vec3 calc::operator + (vec3 vec1, vec3 vec2)
+float calc::mod (float a, float b)
 {
-	return vec3
+	while (a >= b)
 	{
-		vec1.x + vec2.x,
-		vec1.y + vec2.y,
-		vec1.z + vec2.z
-	};
-}
-
-vec3 calc::operator - (vec3 vec1, vec3 vec2)
-{
-	return vec3
+		a -= b;
+	}
+	while (a < 0)
 	{
-		vec1.x - vec2.x,
-		vec1.y - vec2.y,
-		vec1.z - vec2.z
-	};
-}
+		a += b;
+	}
 
-vec3 calc::operator * (vec3 vec, float sc)
-{
-	return vec3
-	{
-		vec.x * sc,
-		vec.y * sc,
-		vec.z * sc
-	};
+	return a;
 }
-vec3 calc::operator * (float sc, vec3 vec)
-{
-	return vec * sc;
-}
-
-vec3 calc::operator / (vec3 vec, float sc)
-{
-	return vec3
-	{
-		vec.x / sc,
-		vec.y / sc,
-		vec.z / sc
-	};
-}
-
 
 
 
@@ -85,11 +55,58 @@ float calc::magnitude (vec3 vec)
 }
 
 
+float calc::thetaGet (vec3 vec)
+{
+	float theta = atan2(vec.y, vec.x);
+
+	return mod(theta, 2*pi);
+}
+
+float calc::phiGet (vec3 vec)
+{
+	float baseLen = sqrt(vec.x * vec.x + vec.y * vec.y);
+
+	return atan2(vec.z, baseLen);
+}
 
 
-p3 calc::cast (p3 point, vec3 direction, bool doBinSearch)
+
+
+intersect calc::cast (p3 point, vec3 direction, bool doBinSearch)
 {
 
+	vec3 incVec = castIncLen * unitVec(direction);
 
+	p3 trace = point;
+	float traceLen = 0;
+	while (traceLen + castIncLen < castMaxLen)
+	{
+		trace = trace + incVec;
+		traceLen += castIncLen;
+
+		for (size_t i = 0; i < obj::objectList.size(); ++i)
+		{
+			if (obj::objectList[i].O(trace.x, trace.y, trace.z) < 0)
+			{
+				return intersect
+				{
+					true,
+					trace - incVec,
+					i
+				};
+			}
+		}
+	}
+
+	return intersect
+	{
+		false,
+		p3{0, 0, 0},
+		0
+	};
 
 }
+
+
+
+
