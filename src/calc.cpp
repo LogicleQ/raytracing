@@ -80,15 +80,13 @@ float calc::angleSep (vec3 vec1, vec3 vec2)
 }
 
 
-vec3 calc::normVec (p3 point, size_t objIndex)
+vec3 calc::normVec (p3 point, obj::object* obj)
 {
-	obj::object* o1 = obj::objectList[objIndex];
-
 	return vec3
 	{
-		o1->O_x(point.x, point.y, point.z),
-		o1->O_y(point.x, point.y, point.z),
-		o1->O_z(point.x, point.y, point.z)
+		obj->O_x(point.x, point.y, point.z),
+		obj->O_y(point.x, point.y, point.z),
+		obj->O_z(point.x, point.y, point.z)
 	};
 }
 
@@ -122,26 +120,34 @@ anglePair calc::normToAngles (norm n)
 	float theta = -atan(n.x * tan(apertureAngle));
 	float phi = atan2(n.y * tan(apertureAngle), std::abs(1 / cos(theta)));
 
+	theta = theta + camDirection.theta;
+	vec3 thetaRot = unitVec({theta, phi});
+
+	vec3 axis = unitVec({(float) (theta - pi/2), 0});
+	vec3 phiRot = rotVec(thetaRot, axis, camDirection.phi);
+
+	phi = phiGet(phiRot);
+
 	return anglePair{theta, phi};
+
 }
 
 
 
 
-p3 calc::binSearch (p3 point, vec3 incVec, size_t objIndex)
+p3 calc::binSearch (p3 point, vec3 incVec, obj::object* obj)
 {
 	p3 p1 = point;
 	p3 p2 = point + incVec;
 	p3 midPt;
 
-	obj::object* object = obj::objectList[objIndex];
 
 	for (size_t i = 0; i < binSearchIters; ++i)
 	{
 
 		midPt = (p1 + p2) / 2;
 
-		if (object->O(midPt.x, midPt.y, midPt.z) > 0)
+		if (obj->O(midPt.x, midPt.y, midPt.z) > 0)
 		{
 			p1 = midPt;
 		}
@@ -169,7 +175,10 @@ intersect calc::cast (p3 point, vec3 direction, bool doBinSearch)
 
 		for (size_t i = 0; i < obj::objectList.size(); ++i)
 		{
-			if (obj::objectList[i]->O(trace.x, trace.y, trace.z) < 0)
+
+			obj::object* obj = obj::objectList[i];
+
+			if (obj->O(trace.x, trace.y, trace.z) < 0)
 			{
 				//intersected an object
 				if (doBinSearch)
@@ -177,8 +186,8 @@ intersect calc::cast (p3 point, vec3 direction, bool doBinSearch)
 					return intersect
 					{
 						true,
-						binSearch(trace - incVec, incVec, i),
-						i
+						binSearch(trace - incVec, incVec, obj),
+						obj
 					};
 				}
 				else
@@ -188,7 +197,7 @@ intersect calc::cast (p3 point, vec3 direction, bool doBinSearch)
 					{
 						true,
 						trace - incVec,
-						i
+						obj
 					};
 				}
 			}
@@ -199,7 +208,7 @@ intersect calc::cast (p3 point, vec3 direction, bool doBinSearch)
 	{
 		false,
 		p3{0, 0, 0},
-		0
+		NULL
 	};
 
 }

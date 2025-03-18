@@ -2,10 +2,6 @@
 
 std::vector<obj::object*> obj::objectList;
 
-void obj::initObjects ()
-{
-	objectList.push_back(new Obj1());
-}
 
 
 void obj::clearObjects ()
@@ -16,27 +12,58 @@ void obj::clearObjects ()
 	}
 }
 
-
-
-//customizable definitions go here
-
-calc::p3 obj::lightPos = {-2, 2, 2};
-
-
-float obj::Obj1::O (float x, float y, float z)
+obj::color obj::color::operator << (float newWeight)
 {
-	return x*x + y*y + z*z - 1;
+	return color{r, g, b, newWeight};
 }
 
-float obj::Obj1::O_x (float x, float y, float z)
+
+obj::color obj::colorAvg (std::vector<obj::color> colors)
 {
-	return 2*x;
+
+	uint32_t red = 0, green = 0, blue = 0;
+
+	float weightSum = 0;
+
+	for (size_t i = 0; i < colors.size(); ++i)
+	{
+		float weight = colors[i].weight;
+
+		red += colors[i].r * weight;
+		green += colors[i].g * weight;
+		blue += colors[i].b * weight;
+
+		weightSum += weight;
+	}
+
+
+	return obj::color
+	{
+		(uint8_t) (red / weightSum),
+		(uint8_t) (green / weightSum),
+		(uint8_t) (blue / weightSum),
+		1
+	};
+
 }
-float obj::Obj1::O_y (float x, float y, float z)
+
+//angle parameter is the angle of separation between the reflection vector and the vector to light
+obj::color obj::gloss (color col, float angle, float glossDrop)
 {
-	return 2*y;
-}
-float obj::Obj1::O_z (float x, float y, float z)
-{
-	return 2*z;
+
+	if (glossDrop * angle < 1)
+	{
+
+		return colorAvg
+		({
+			{255, 255, 255, 1 - glossDrop * angle},
+			col << glossDrop * angle
+		});
+
+	}
+	else
+	{
+		return col;
+	}
+
 }

@@ -9,9 +9,9 @@ uint32_t win_height = 600;
 
 
 
-p3 camPos = {-5, 0, 0};
+p3 camPos = {-5, -2, 5};
 
-anglePair camDirection = {0, 0};
+anglePair camDirection = {(float)pi/8, (float) -pi/4};
 
 //angle from center of screen to right edge
 float apertureAngle = pi / 4;

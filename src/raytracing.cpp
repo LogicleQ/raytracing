@@ -35,28 +35,49 @@ void RT::run ()
 			calc::intersect hit = calc::cast(camPos, dir, true);
 
 
+			//initial ray hit an object
 			if (hit.defined)
 			{
 
-				calc::vec3 axis = calc::normVec(hit.point, hit.objIndex);
+				calc::vec3 axis = calc::normVec(hit.point, hit.obj);
 
 				calc::vec3 vecToCam{hit.point, camPos};
 				calc::vec3 vecToLight{hit.point, obj::lightPos};
 
 				calc::vec3 reflect = calc::rotVec(vecToCam, axis, pi);
 
-				float ang = calc::angleSep(reflect, vecToLight);
+				float angSep = calc::angleSep(reflect, vecToLight);
+
+
+				//cast shadow ray
+				calc::intersect shadowRay = calc::cast(hit.point, vecToLight, false);
+
 
 				//std::cout << reflect.to_string() << std::endl;
 
-				if (ang < pi / 4)
+				if (shadowRay.defined)
 				{
-					SDL_SetRenderDrawColor(m_renderer, 255, 0, 0, 255);
+					obj::color col = obj::colorAvg
+					({
+						hit.obj->col << 1,
+						{0, 0, 0, 2}
+					});
+
+					SDL_SetRenderDrawColor(m_renderer, col.r, col.g, col.b, 255);
 				}
 				else
 				{
-					SDL_SetRenderDrawColor(m_renderer, 140, 0, 0, 255);
+					obj::color col = obj::colorAvg
+					({
+						hit.obj->col << 3,
+						{0, 0, 0, 1}
+					});
+
+					col = obj::gloss(col, angSep, hit.obj->glossDrop);
+
+					SDL_SetRenderDrawColor(m_renderer, col.r, col.g, col.b, 255);
 				}
+
 				SDL_RenderPoint(m_renderer, x, y);
 			}
 			else
@@ -64,10 +85,10 @@ void RT::run ()
 				SDL_SetRenderDrawColor(m_renderer, 25, 25, 40, 255);
 				SDL_RenderPoint(m_renderer, x, y);
 			}
-		
-		
-		
-			//present buffer to screen
+
+
+
+
 
 			++x;
 			if (x >= win_width)

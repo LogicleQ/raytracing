@@ -11,8 +11,36 @@ namespace obj
 
 	extern calc::p3 lightPos;
 
+	struct color
+	{
+		uint8_t r;
+		uint8_t g;
+		uint8_t b;
+
+		float weight{1};
+
+		//temporarily return a color with a different weight
+		color operator << (float newWeight);
+
+		std::string to_string ()
+		{
+			return std::string{"color{"} + std::to_string(r) + ", " + std::to_string(g) + ", " + std::to_string(b) + ", " + std::to_string(weight) + "}";
+		}
+
+	};
+
+	color colorAvg (std::vector<color> colors);
+
+	color gloss (color col, float angle, float glossDrop);
+
+
+
 	struct object
 	{
+		color col = {0, 0, 0};
+
+		float glossDrop = 0;
+
 		//main object function
 		virtual float O (float, float, float) = 0;
 
@@ -20,6 +48,8 @@ namespace obj
 		virtual float O_x (float, float, float) = 0;
 		virtual float O_y (float, float, float) = 0;
 		virtual float O_z (float, float, float) = 0;
+
+		virtual ~object () {};
 
 	};
 
@@ -31,6 +61,8 @@ namespace obj
 
 	struct Obj1 : object
 	{
+		Obj1();
+
 		virtual float O (float, float, float);
 
 		virtual float O_x (float, float, float);

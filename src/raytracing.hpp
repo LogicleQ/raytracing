@@ -36,6 +36,13 @@ class RT
 
 
 
+
+namespace obj
+{
+	struct object;
+}
+
+
 const double pi = 3.1415926535897932;
 
 namespace calc
@@ -125,7 +132,7 @@ namespace calc
 
 	float angleSep (vec3 vec1, vec3 vec2);
 
-	vec3 normVec (p3 point, size_t objIndex);
+	vec3 normVec (p3 point, obj::object* obj);
 
 	vec3 rotVec (vec3 vec, vec3 axis, float theta);
 
@@ -156,7 +163,7 @@ namespace calc
 	{
 		bool defined;
 		p3 point;
-		size_t objIndex;
+		obj::object* obj;
 	};
 
 	extern float binSearchIters;
@@ -164,7 +171,7 @@ namespace calc
 	extern float castIncLen;
 	extern float castMaxLen;
 
-	p3 binSearch (p3 point, vec3 incVec, size_t objIndex);
+	p3 binSearch (p3 point, vec3 incVec, obj::object* obj);
 	intersect cast (p3 point, vec3 direction, bool doBinSearch);
 
 };
