@@ -2,12 +2,15 @@
 #define RAYTRACING_HPP
 
 #include <string>
-#include <vector>
 
 #include <SDL3/SDL.h>
 
+
+
 extern uint32_t win_width;
 extern uint32_t win_height;
+
+
 
 class RT
 {
@@ -31,28 +34,6 @@ class RT
 
 };
 
-namespace obj
-{
-	struct object
-	{
-		float (*O) (float, float, float);
-
-		float (*O_x) (float, float, float);
-		float (*O_y) (float, float, float);
-		float (*O_z) (float, float, float);
-	};
-
-	extern std::vector<object> objectList;
-	void initObjects ();
-
-	//object function
-	float O1 (float x, float y, float z);
-
-	//partial derivatives
-	float O1_x (float x, float y, float z);
-	float O1_y (float x, float y, float z);
-	float O1_z (float x, float y, float z);
-}
 
 
 const double pi = 3.1415926535897932;
@@ -78,13 +59,23 @@ namespace calc
 		float y;
 		float z;
 
+		vec3 (float _x, float _y, float _z)
+			: x {_x},
+				y {_y},
+				z {_z}
+		{}
+
+		vec3 (p3 from, p3 to)
+			: x {to.x - from.x},
+				y {to.y - from.y},
+				z {to.z - from.z}
+		{}
+
 		std::string to_string ()
 		{
 			return std::string{"vec3{"} + std::to_string(x) + ", " + std::to_string(y) + ", " + std::to_string(z) + "}";
 		}
 	};
-
-
 
 	vec3 operator + (vec3 vec1, vec3 vec2);
 	vec3 operator - (vec3 vec1, vec3 vec2);
@@ -92,14 +83,39 @@ namespace calc
 	vec3 operator * (float sc, vec3 vec);
 	vec3 operator / (vec3 vec, float sc);
 
+	float dot (vec3 vec1, vec3 vec2);
+	vec3 cross (vec3 vec1, vec3 vec2);
+
+	p3 operator + (p3 pt1, p3 pt2);
 	p3 operator + (p3 pt, vec3 vec);
+	p3 operator - (p3 pt1, p3 pt2);
 	p3 operator - (p3 pt, vec3 vec);
+	p3 operator * (p3 pt, float sc);
+	p3 operator / (p3 pt, float sc);
+
+
+
+
+
+
+	struct anglePair
+	{
+		float theta;
+		float phi;
+
+		std::string to_string ()
+		{
+			return std::string{"anglePair{"} + std::to_string(theta) + ", " + std::to_string(phi) + "}";
+		}
+	};
+
+
 
 
 
 	float mod (float a, float b);
 
-	vec3 unitVec (float theta, float phi);
+	vec3 unitVec (anglePair angs);
 	vec3 unitVec (vec3 from);
 
 	float magnitude (vec3 vec);
@@ -107,11 +123,34 @@ namespace calc
 	float thetaGet (vec3 vec);
 	float phiGet (vec3 vec);
 
-	extern float castIncLen;
-	extern float castMaxLen;
+	float angleSep (vec3 vec1, vec3 vec2);
 
-	float coordNorm_horiz (uint32_t coord);
-	float coordNorm_vert (uint32_t coord);
+	vec3 normVec (p3 point, size_t objIndex);
+
+	vec3 rotVec (vec3 vec, vec3 axis, float theta);
+
+
+
+	struct norm
+	{
+		float x;
+		float y;
+
+		std::string to_string ()
+		{
+			return std::string{"norm{"} + std::to_string(x) + ", " + std::to_string(y) + "}";
+		}
+	};
+
+	norm coordNorm (uint32_t x, uint32_t y);
+
+
+
+
+	anglePair normToAngles (norm n);
+
+
+
 
 	struct intersect
 	{
@@ -120,8 +159,20 @@ namespace calc
 		size_t objIndex;
 	};
 
+	extern float binSearchIters;
+
+	extern float castIncLen;
+	extern float castMaxLen;
+
+	p3 binSearch (p3 point, vec3 incVec, size_t objIndex);
 	intersect cast (p3 point, vec3 direction, bool doBinSearch);
 
 };
+
+extern calc::p3 camPos;
+
+extern calc::anglePair camDirection;
+
+extern float apertureAngle;
 
 #endif

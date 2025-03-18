@@ -1,10 +1,14 @@
 #include "raytracing.hpp"
 
+#include "objects.hpp"
+
 #include <cmath>
 
 using calc::p3;
 using calc::vec3;
+using calc::anglePair;
 using calc::intersect;
+using calc::norm;
 
 
 
@@ -24,13 +28,13 @@ float calc::mod (float a, float b)
 
 
 
-vec3 calc::unitVec (float theta, float phi)
+vec3 calc::unitVec (anglePair angs)
 {
 	return vec3
 	{
-		(float) (cos(theta) * cos(phi)),
-		(float) (sin(theta) * cos(phi)),
-		(float) sin(phi)
+		(float) (cos(angs.theta) * cos(angs.phi)),
+		(float) (sin(angs.theta) * cos(angs.phi)),
+		(float) sin(angs.phi)
 	};
 }
 
@@ -51,7 +55,7 @@ vec3 calc::unitVec (vec3 from)
 
 float calc::magnitude (vec3 vec)
 {
-	return sqrt(vec.x * vec.x + vec.y + vec.y + vec.z + vec.z);
+	return sqrt(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z);
 }
 
 
@@ -70,7 +74,86 @@ float calc::phiGet (vec3 vec)
 }
 
 
+float calc::angleSep (vec3 vec1, vec3 vec2)
+{
+	return acos(dot(vec1, vec2) / (magnitude(vec1) * magnitude(vec2)));
+}
 
+
+vec3 calc::normVec (p3 point, size_t objIndex)
+{
+	obj::object* o1 = obj::objectList[objIndex];
+
+	return vec3
+	{
+		o1->O_x(point.x, point.y, point.z),
+		o1->O_y(point.x, point.y, point.z),
+		o1->O_z(point.x, point.y, point.z)
+	};
+}
+
+vec3 calc::rotVec (vec3 vec, vec3 axis, float theta)
+{
+	vec3 unitAxis = unitVec(axis);
+
+	return vec * cos(theta) + cross(unitAxis, vec) * sin(theta) + unitAxis * dot(unitAxis, vec) * (1 - cos(theta));
+}
+
+
+
+
+
+//middle is the origin, upwards and rightwards is positive
+//based on width, not height
+norm calc::coordNorm (uint32_t x, uint32_t y)
+{
+	return norm
+	{
+		(2.0f * x) / win_width - 1,
+		(2.0f * (win_height - y) - win_height) / win_width
+	};
+}
+
+
+
+anglePair calc::normToAngles (norm n)
+{
+
+	float theta = -atan(n.x * tan(apertureAngle));
+	float phi = atan2(n.y * tan(apertureAngle), std::abs(1 / cos(theta)));
+
+	return anglePair{theta, phi};
+}
+
+
+
+
+p3 calc::binSearch (p3 point, vec3 incVec, size_t objIndex)
+{
+	p3 p1 = point;
+	p3 p2 = point + incVec;
+	p3 midPt;
+
+	obj::object* object = obj::objectList[objIndex];
+
+	for (size_t i = 0; i < binSearchIters; ++i)
+	{
+
+		midPt = (p1 + p2) / 2;
+
+		if (object->O(midPt.x, midPt.y, midPt.z) > 0)
+		{
+			p1 = midPt;
+		}
+		else
+		{
+			p2 = midPt;
+		}
+
+	}
+
+	return midPt;
+}
 
 intersect calc::cast (p3 point, vec3 direction, bool doBinSearch)
 {
@@ -86,14 +169,28 @@ intersect calc::cast (p3 point, vec3 direction, bool doBinSearch)
 
 		for (size_t i = 0; i < obj::objectList.size(); ++i)
 		{
-			if (obj::objectList[i].O(trace.x, trace.y, trace.z) < 0)
+			if (obj::objectList[i]->O(trace.x, trace.y, trace.z) < 0)
 			{
-				return intersect
+				//intersected an object
+				if (doBinSearch)
 				{
-					true,
-					trace - incVec,
-					i
-				};
+					return intersect
+					{
+						true,
+						binSearch(trace - incVec, incVec, i),
+						i
+					};
+				}
+				else
+				{
+
+					return intersect
+					{
+						true,
+						trace - incVec,
+						i
+					};
+				}
 			}
 		}
 	}
@@ -106,7 +203,3 @@ intersect calc::cast (p3 point, vec3 direction, bool doBinSearch)
 	};
 
 }
-
-
-
-

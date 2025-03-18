@@ -1,34 +1,42 @@
-#include "raytracing.hpp"
+#include "objects.hpp"
 
-std::vector<obj::object> obj::objectList;
+std::vector<obj::object*> obj::objectList;
 
 void obj::initObjects ()
 {
-	obj::objectList.push_back(
-		obj::object{
-		&obj::O1, &obj::O1_x, &obj::O1_y, &obj::O1_z
-		}
-	);
+	objectList.push_back(new Obj1());
+}
+
+
+void obj::clearObjects ()
+{
+	for (size_t i = 0; i < objectList.size(); ++i)
+	{
+		delete objectList[i];
+	}
 }
 
 
 
-float obj::O1 (float x, float y, float z)
+//customizable definitions go here
+
+calc::p3 obj::lightPos = {-2, 2, 2};
+
+
+float obj::Obj1::O (float x, float y, float z)
 {
 	return x*x + y*y + z*z - 1;
 }
 
-float obj::O1_x (float x, float y, float z)
+float obj::Obj1::O_x (float x, float y, float z)
 {
 	return 2*x;
 }
-
-float obj::O1_y (float x, float y, float z)
+float obj::Obj1::O_y (float x, float y, float z)
 {
 	return 2*y;
 }
-
-float obj::O1_z (float x, float y, float z)
+float obj::Obj1::O_z (float x, float y, float z)
 {
 	return 2*z;
 }
