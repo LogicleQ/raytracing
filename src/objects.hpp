@@ -71,6 +71,30 @@ namespace obj
 
 	};
 
+	struct Obj2 : object
+	{
+		Obj2();
+
+		virtual float O (float, float, float);
+
+		virtual float O_x (float, float, float);
+		virtual float O_y (float, float, float);
+		virtual float O_z (float, float, float);
+
+	};
+
+	struct Obj3 : object
+	{
+		Obj3();
+
+		virtual float O (float, float, float);
+
+		virtual float O_x (float, float, float);
+		virtual float O_y (float, float, float);
+		virtual float O_z (float, float, float);
+
+	};
+
 }
 
 

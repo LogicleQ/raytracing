@@ -4,14 +4,14 @@ using calc::p3;
 using calc::anglePair;
 
 
-uint32_t win_width = 800;
-uint32_t win_height = 600;
+uint32_t win_width = 1000;
+uint32_t win_height = 800;
 
 
 
-p3 camPos = {-5, -2, 5};
+p3 camPos = {-6, -2, 3};
 
-anglePair camDirection = {(float)pi/8, (float) -pi/4};
+anglePair camDirection = {(float) pi/5, (float) (-pi/8)};
 
 //angle from center of screen to right edge
 float apertureAngle = pi / 4;

@@ -114,6 +114,7 @@ norm calc::coordNorm (uint32_t x, uint32_t y)
 
 
 
+
 anglePair calc::normToAngles (norm n)
 {
 
@@ -123,9 +124,10 @@ anglePair calc::normToAngles (norm n)
 	theta = theta + camDirection.theta;
 	vec3 thetaRot = unitVec({theta, phi});
 
-	vec3 axis = unitVec({(float) (theta - pi/2), 0});
+	vec3 axis = unitVec({(float) (camDirection.theta - pi/2), 0});
 	vec3 phiRot = rotVec(thetaRot, axis, camDirection.phi);
 
+	theta = thetaGet(phiRot);
 	phi = phiGet(phiRot);
 
 	return anglePair{theta, phi};
