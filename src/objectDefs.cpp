@@ -53,7 +53,7 @@ float obj::Obj1::O_z (float x, float y, float z)
 
 obj::Obj2::Obj2 ()
 {
-	col = {0, 255, 50};
+	col = {0, 210, 70};
 
 	glossDrop = 1.5;
 }

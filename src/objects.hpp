@@ -33,6 +33,8 @@ namespace obj
 
 	color gloss (color col, float angle, float glossDrop);
 
+	color reflection (color colMain, color colReflect, float angle, float maxRefl, float reflDrop, float permRefl);
+
 
 
 	struct object

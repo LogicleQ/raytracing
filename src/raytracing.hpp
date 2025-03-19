@@ -12,6 +12,22 @@ extern uint32_t win_height;
 
 
 
+//this is a forward declaration
+//the actual declaration is further down this file
+namespace calc
+{
+	struct p3;
+	struct vec3;
+};
+
+//this is also a forward declaration
+namespace obj
+{
+	struct object;
+	struct color;
+}
+
+
 class RT
 {
 
@@ -19,6 +35,8 @@ class RT
 		RT (std::string title, int width, int height);
 
 		void run ();
+
+		obj::color rayCast (calc::p3 startPt, calc::vec3 direction, uint32_t iteration);
 
 
 	private:
@@ -37,10 +55,6 @@ class RT
 
 
 
-namespace obj
-{
-	struct object;
-}
 
 
 const double pi = 3.1415926535897932;
@@ -172,7 +186,7 @@ namespace calc
 	extern float castMaxLen;
 
 	p3 binSearch (p3 point, vec3 incVec, obj::object* obj);
-	intersect cast (p3 point, vec3 direction, bool doBinSearch);
+	intersect cast (p3 point, vec3 direction, bool doBinSearch, float maxLen = castMaxLen);
 
 };
 

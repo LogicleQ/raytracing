@@ -48,8 +48,14 @@ obj::color obj::colorAvg (std::vector<obj::color> colors)
 }
 
 //angle parameter is the angle of separation between the reflection vector and the vector to light
+//set glossDrop = -1 for no gloss effect
 obj::color obj::gloss (color col, float angle, float glossDrop)
 {
+
+	if (glossDrop == -1)
+	{
+		return col;
+	}
 
 	if (glossDrop * angle < 1)
 	{
@@ -65,5 +71,25 @@ obj::color obj::gloss (color col, float angle, float glossDrop)
 	{
 		return col;
 	}
+
+}
+
+//angle parameter is the angle of separation between the surface normal vector and the negative of the incident ray vector
+//maxRefl and permRefl should be within 0 (no reflection) and 1 (complete reflection)
+obj::color obj::reflection (color colMain, color colReflect, float angle, float maxRefl, float reflDrop, float permRefl)
+{
+
+	float refl = reflDrop * (angle - pi/2) + maxRefl;
+
+	if (refl < permRefl)
+	{
+		refl = permRefl;
+	}
+
+	return colorAvg
+	({
+		colReflect << refl,
+		colMain << 1 - refl
+	});
 
 }

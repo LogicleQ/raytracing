@@ -163,17 +163,24 @@ p3 calc::binSearch (p3 point, vec3 incVec, obj::object* obj)
 	return midPt;
 }
 
-intersect calc::cast (p3 point, vec3 direction, bool doBinSearch)
+intersect calc::cast (p3 point, vec3 direction, bool doBinSearch, float maxLen)
 {
 
 	vec3 incVec = castIncLen * unitVec(direction);
 
 	p3 trace = point;
 	float traceLen = 0;
-	while (traceLen + castIncLen < castMaxLen)
+	while (traceLen < maxLen)
 	{
+		if (traceLen + castIncLen >= maxLen)
+		{
+			//it cannot go a full increment because it has reached the maxLen limit
+			float remainingDist = maxLen - traceLen;
+			incVec = remainingDist * unitVec(direction);
+		}
 		trace = trace + incVec;
 		traceLen += castIncLen;
+
 
 		for (size_t i = 0; i < obj::objectList.size(); ++i)
 		{
