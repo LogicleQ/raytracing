@@ -14,7 +14,7 @@ void obj::initObjects ()
 
 
 
-calc::p3 obj::lightPos = {-15, 15, 15};
+calc::p3 obj::lightPos = {-15, 11, 15};
 
 
 
@@ -24,9 +24,15 @@ calc::p3 obj::lightPos = {-15, 15, 15};
 
 obj::Obj1::Obj1 ()
 {
+	shiftOrigin = {0, 0, 2};
+
 	col = {255, 0, 0};
 
 	glossDrop = 1.5;
+
+	maxRefl = 0;
+	reflDrop = 0;
+	permRefl = 0.3;
 }
 
 float obj::Obj1::O (float x, float y, float z)
@@ -53,27 +59,33 @@ float obj::Obj1::O_z (float x, float y, float z)
 
 obj::Obj2::Obj2 ()
 {
-	col = {0, 210, 70};
+	shiftOrigin = {-1.7, 2, 3};
+
+	col = {20, 230, 50};
 
 	glossDrop = 1.5;
+
+	maxRefl = 0;
+	reflDrop = 0;
+	permRefl = 0.45;
 }
 
 float obj::Obj2::O (float x, float y, float z)
 {
-	return (x+2)*(x+2) + (y-2)*(y-2) + (z-0.7)*(z-0.7) - 0.7;
+	return x*x + y*y + z*z - 0.7;
 }
 
 float obj::Obj2::O_x (float x, float y, float z)
 {
-	return 2*(x+2);
+	return 2*x;
 }
 float obj::Obj2::O_y (float x, float y, float z)
 {
-	return 2*(y-2);
+	return 2*y;
 }
 float obj::Obj2::O_z (float x, float y, float z)
 {
-	return 2*(z-0.7);
+	return 2*z;
 }
 
 
@@ -82,14 +94,20 @@ float obj::Obj2::O_z (float x, float y, float z)
 
 obj::Obj3::Obj3 ()
 {
+	shiftOrigin = {0, 0, 0};
+
 	col = {80, 100, 140};
 
 	glossDrop = 1.5;
+
+	maxRefl = 0.5;
+	reflDrop = 1.5;
+	permRefl = 0.3;
 }
 
 float obj::Obj3::O (float x, float y, float z)
 {
-	return z + 2;
+	return z;
 }
 
 float obj::Obj3::O_x (float x, float y, float z)

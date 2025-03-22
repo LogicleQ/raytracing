@@ -20,6 +20,8 @@ void RT::run ()
 
 	SDL_RenderPresent(m_renderer);
 
+	uint8_t percentDone = 0;
+
 	while (m_isRunning)
 	{
 
@@ -31,22 +33,33 @@ void RT::run ()
 			calc::vec3 dir = calc::unitVec(calc::normToAngles(n));
 
 
-			rayCast(camPos, dir, 0);
+			//cast the full ray for this pixel
+			obj::color pixelColor = rayCast(camPos, dir, 0);
 
+			SDL_SetRenderDrawColor(m_renderer, pixelColor.r, pixelColor.g, pixelColor.b, 255);
 
+			SDL_RenderPoint(m_renderer, x, y);
 
 			++x;
-			if (x >= win_width)
+
+			size_t ind = x + m_width * y;
+			const size_t maxInd = m_width * m_height;
+
+			if (100.0 * ind / maxInd >= percentDone + 10)
+			{
+				percentDone += 10;
+				printf("%d%%\n", percentDone);
+			}
+
+			if (x >= m_width)
 			{
 				x = 0;
 				++y;
-				printf("%d, %d\n", x, y);
 			}
-			if (y >= win_height)
+			if (y >= m_height)
 			{
 				rendering = false;
 				SDL_RenderPresent(m_renderer);
-				printf("done\n");
 			}
 
 

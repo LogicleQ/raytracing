@@ -1,3 +1,3 @@
 build:
 	@cd src; \
-		g++ -o ../raytracing *.cpp -lSDL3
+		g++ -O3 -o ../raytracing *.cpp -lSDL3

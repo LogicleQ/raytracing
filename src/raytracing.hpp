@@ -100,6 +100,7 @@ namespace calc
 
 	vec3 operator + (vec3 vec1, vec3 vec2);
 	vec3 operator - (vec3 vec1, vec3 vec2);
+	vec3 operator - (vec3 vec);
 	vec3 operator * (vec3 vec, float sc);
 	vec3 operator * (float sc, vec3 vec);
 	vec3 operator / (vec3 vec, float sc);
@@ -184,6 +185,8 @@ namespace calc
 
 	extern float castIncLen;
 	extern float castMaxLen;
+
+	extern uint32_t maxReflections;
 
 	p3 binSearch (p3 point, vec3 incVec, obj::object* obj);
 	intersect cast (p3 point, vec3 direction, bool doBinSearch, float maxLen = castMaxLen);

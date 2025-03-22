@@ -84,9 +84,9 @@ vec3 calc::normVec (p3 point, obj::object* obj)
 {
 	return vec3
 	{
-		obj->O_x(point.x, point.y, point.z),
-		obj->O_y(point.x, point.y, point.z),
-		obj->O_z(point.x, point.y, point.z)
+		obj->O_x_shift(point.x, point.y, point.z),
+		obj->O_y_shift(point.x, point.y, point.z),
+		obj->O_z_shift(point.x, point.y, point.z)
 	};
 }
 
@@ -149,7 +149,7 @@ p3 calc::binSearch (p3 point, vec3 incVec, obj::object* obj)
 
 		midPt = (p1 + p2) / 2;
 
-		if (obj->O(midPt.x, midPt.y, midPt.z) > 0)
+		if (obj->O_shift(midPt.x, midPt.y, midPt.z) > 0)
 		{
 			p1 = midPt;
 		}
@@ -187,7 +187,7 @@ intersect calc::cast (p3 point, vec3 direction, bool doBinSearch, float maxLen)
 
 			obj::object* obj = obj::objectList[i];
 
-			if (obj->O(trace.x, trace.y, trace.z) < 0)
+			if (obj->O_shift(trace.x, trace.y, trace.z) < 0)
 			{
 				//intersected an object
 				if (doBinSearch)

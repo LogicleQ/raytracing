@@ -23,6 +23,16 @@ vec3 calc::operator - (vec3 vec1, vec3 vec2)
 	};
 }
 
+vec3 calc::operator - (vec3 vec)
+{
+	return vec3
+	{
+		-vec.x,
+		-vec.y,
+		-vec.z
+	};
+}
+
 vec3 calc::operator * (vec3 vec, float sc)
 {
 	return vec3

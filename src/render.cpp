@@ -2,31 +2,29 @@
 
 #include "objects.hpp"
 
-#include <iostream>
 
-
-obj::color rayCast (calc::p3 startPt, calc::vec3 direction, uint32_t iteration)
+//the iteration parameter is used for recusively calculating reflections
+obj::color RT::rayCast (calc::p3 startPt, calc::vec3 direction, uint32_t iteration)
 {
 
 
 	calc::intersect hit = calc::cast(startPt, direction, true);
 
 
-	#error fix the stuff below:
-	#error e.g. change all camPos to startPt
-
 	//initial ray hit an object
 	if (hit.defined)
 	{
 
-		calc::vec3 axis = calc::normVec(hit.point, hit.obj);
+		calc::vec3 surfaceNorm = calc::normVec(hit.point, hit.obj);
 
-		calc::vec3 vecToCam{hit.point, camPos};
+		calc::vec3 vecToSource = -direction;
 		calc::vec3 vecToLight{hit.point, obj::lightPos};
 
-		calc::vec3 reflect = calc::rotVec(vecToCam, axis, pi);
+		calc::vec3 reflect = calc::rotVec(vecToSource, surfaceNorm, pi);
 
-		float angSep = calc::angleSep(reflect, vecToLight);
+		//angle of separation between the reflection ray and the vector to light
+		//used to calculate gloss
+		float angSepToLight = calc::angleSep(reflect, vecToLight);
 
 
 		//cast shadow ray
@@ -34,40 +32,54 @@ obj::color rayCast (calc::p3 startPt, calc::vec3 direction, uint32_t iteration)
 		calc::intersect shadowRay = calc::cast(hit.point, vecToLight, false, distToLight);
 
 
-		//std::cout << reflect.to_string() << std::endl;
+
+		//this is the calculated color of the surface before averaging it with any reflections
+		obj::color mainCol;
 
 		if (shadowRay.defined)
 		{
-			obj::color col = obj::colorAvg
+
+			mainCol = obj::colorAvg
 			({
 				hit.obj->col << 1,
-				{0, 0, 0, 2}
+				{0, 0, 0, 3}
 			});
 
-			SDL_SetRenderDrawColor(m_renderer, col.r, col.g, col.b, 255);
 		}
 		else
 		{
-			obj::color col = obj::colorAvg
+			mainCol = obj::colorAvg
 			({
 				hit.obj->col << 3,
 				{0, 0, 0, 1}
 			});
 
-			col = obj::gloss(col, angSep, hit.obj->glossDrop);
+			mainCol = obj::gloss(mainCol, angSepToLight, hit.obj->glossDrop);
 
-			SDL_SetRenderDrawColor(m_renderer, col.r, col.g, col.b, 255);
 		}
 
-		SDL_RenderPoint(m_renderer, x, y);
+
+		//calculate reflections
+		if (iteration < calc::maxReflections)
+		{
+
+			//angle of separation between reflection and surface normal
+			//the value described above ^^^ is equivalent to the angle of separation between vecToSource and surface normal
+			float angSepToNorm = calc::angleSep(vecToSource, surfaceNorm);
+
+			obj::color reflColor = rayCast(hit.point, reflect, iteration + 1);
+
+			mainCol = obj::reflection(mainCol, reflColor, angSepToNorm, hit.obj->maxRefl, hit.obj->reflDrop, hit.obj->permRefl);
+		}
+
+		return mainCol;
+
 	}
 	else
 	{
-		SDL_SetRenderDrawColor(m_renderer, 25, 25, 40, 255);
-		SDL_RenderPoint(m_renderer, x, y);
+		//the ray did not intersect any object within the limit
+		return obj::color{15, 15, 25};
 	}
-
-
 
 
 }

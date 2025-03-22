@@ -4,6 +4,30 @@ std::vector<obj::object*> obj::objectList;
 
 
 
+float obj::object::O_shift (float x, float y, float z)
+{
+	return O(x - shiftOrigin.x, y - shiftOrigin.y, z - shiftOrigin.z);
+}
+
+float obj::object::O_x_shift (float x, float y, float z)
+{
+	return O_x(x - shiftOrigin.x, y - shiftOrigin.y, z - shiftOrigin.z);
+}
+
+float obj::object::O_y_shift (float x, float y, float z)
+{
+	return O_y(x - shiftOrigin.x, y - shiftOrigin.y, z - shiftOrigin.z);
+}
+
+float obj::object::O_z_shift (float x, float y, float z)
+{
+	return O_z(x - shiftOrigin.x, y - shiftOrigin.y, z - shiftOrigin.z);
+}
+
+
+
+
+
 void obj::clearObjects ()
 {
 	for (size_t i = 0; i < objectList.size(); ++i)

@@ -39,9 +39,15 @@ namespace obj
 
 	struct object
 	{
+		calc::p3 shiftOrigin = {0, 0, 0};
+
 		color col = {0, 0, 0};
 
 		float glossDrop = 0;
+
+		float maxRefl = 0;
+		float reflDrop = 0;
+		float permRefl = 0;
 
 		//main object function
 		virtual float O (float, float, float) = 0;
@@ -50,6 +56,12 @@ namespace obj
 		virtual float O_x (float, float, float) = 0;
 		virtual float O_y (float, float, float) = 0;
 		virtual float O_z (float, float, float) = 0;
+
+		//internal shift functions
+		float O_shift (float, float, float);
+		float O_x_shift (float, float, float);
+		float O_y_shift (float, float, float);
+		float O_z_shift (float, float, float);
 
 		virtual ~object () {};
 
