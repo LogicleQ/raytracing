@@ -97,6 +97,18 @@ namespace obj
 
 	};
 
+	struct Sphere2 : object
+	{
+		Sphere2();
+
+		virtual float O (float, float, float);
+
+		virtual float O_x (float, float, float);
+		virtual float O_y (float, float, float);
+		virtual float O_z (float, float, float);
+
+	};
+
 	struct Floor : object
 	{
 		Floor();

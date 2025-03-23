@@ -7,6 +7,7 @@ void obj::initObjects ()
 
 	objectList.push_back(new Cube1());
 	objectList.push_back(new Sphere1());
+	objectList.push_back(new Sphere2());
 	objectList.push_back(new Floor());
 
 }
@@ -89,7 +90,44 @@ float obj::Sphere1::O_z (float x, float y, float z)
 
 
 
-// Object 3 (floor)
+
+// other sphere
+
+obj::Sphere2::Sphere2 ()
+{
+	shiftOrigin = {-4, 1.5, 2.5};
+
+	col = {20, 50, 70};
+
+	glossDrop = 2;
+
+	maxRefl = 0;
+	reflDrop = 0;
+	permRefl = 0.8;
+}
+
+float obj::Sphere2::O (float x, float y, float z)
+{
+	return x*x + y*y + z*z - 0.2;
+}
+
+float obj::Sphere2::O_x (float x, float y, float z)
+{
+	return 2*x;
+}
+float obj::Sphere2::O_y (float x, float y, float z)
+{
+	return 2*y;
+}
+float obj::Sphere2::O_z (float x, float y, float z)
+{
+	return 2*z;
+}
+
+
+
+
+// floor
 
 obj::Floor::Floor ()
 {
@@ -97,7 +135,7 @@ obj::Floor::Floor ()
 
 	col = {80, 100, 140};
 
-	glossDrop = 1.5;
+	glossDrop = 2;
 
 	maxRefl = 0.8;
 	reflDrop = 1.5;
