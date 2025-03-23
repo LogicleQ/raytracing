@@ -3,11 +3,11 @@
 void obj::initObjects ()
 {
 
-	//any defined objects must be entered into this initialization function
+	//any defined objects must be entered into this initialization function to be rendered
 
-	objectList.push_back(new Obj1());
-	objectList.push_back(new Obj2());
-	objectList.push_back(new Obj3());
+	objectList.push_back(new Cube1());
+	objectList.push_back(new Sphere1());
+	objectList.push_back(new Floor());
 
 }
 
@@ -19,10 +19,9 @@ calc::p3 obj::lightPos = {-15, 11, 15};
 
 
 
+// red rounded cube
 
-//Object 1 (rounded cube)
-
-obj::Obj1::Obj1 ()
+obj::Cube1::Cube1 ()
 {
 	shiftOrigin = {0, 0, 2};
 
@@ -35,29 +34,29 @@ obj::Obj1::Obj1 ()
 	permRefl = 0.3;
 }
 
-float obj::Obj1::O (float x, float y, float z)
+float obj::Cube1::O (float x, float y, float z)
 {
-	return x*x*x*x*x*x*x*x + y*y*y*y*y*y*y*y + z*z*z*z*z*z*z*z - 1;
+	return x*x*x*x*x*x*x*x*x*x + y*y*y*y*y*y*y*y*y*y + z*z*z*z*z*z*z*z*z*z - 1;
 }
 
-float obj::Obj1::O_x (float x, float y, float z)
+float obj::Cube1::O_x (float x, float y, float z)
 {
-	return 8*x*x*x*x*x*x*x;
+	return 10*x*x*x*x*x*x*x*x*x;
 }
-float obj::Obj1::O_y (float x, float y, float z)
+float obj::Cube1::O_y (float x, float y, float z)
 {
-	return 8*y*y*y*y*y*y*y;
+	return 10*y*y*y*y*y*y*y*y*y;
 }
-float obj::Obj1::O_z (float x, float y, float z)
+float obj::Cube1::O_z (float x, float y, float z)
 {
-	return 8*z*z*z*z*z*z*z;
+	return 10*z*z*z*z*z*z*z*z*z;
 }
 
 
 
-// Object 2 (sphere)
+// green sphere
 
-obj::Obj2::Obj2 ()
+obj::Sphere1::Sphere1 ()
 {
 	shiftOrigin = {-1.7, 2, 3};
 
@@ -70,20 +69,20 @@ obj::Obj2::Obj2 ()
 	permRefl = 0.45;
 }
 
-float obj::Obj2::O (float x, float y, float z)
+float obj::Sphere1::O (float x, float y, float z)
 {
 	return x*x + y*y + z*z - 0.7;
 }
 
-float obj::Obj2::O_x (float x, float y, float z)
+float obj::Sphere1::O_x (float x, float y, float z)
 {
 	return 2*x;
 }
-float obj::Obj2::O_y (float x, float y, float z)
+float obj::Sphere1::O_y (float x, float y, float z)
 {
 	return 2*y;
 }
-float obj::Obj2::O_z (float x, float y, float z)
+float obj::Sphere1::O_z (float x, float y, float z)
 {
 	return 2*z;
 }
@@ -92,7 +91,7 @@ float obj::Obj2::O_z (float x, float y, float z)
 
 // Object 3 (floor)
 
-obj::Obj3::Obj3 ()
+obj::Floor::Floor ()
 {
 	shiftOrigin = {0, 0, 0};
 
@@ -100,25 +99,25 @@ obj::Obj3::Obj3 ()
 
 	glossDrop = 1.5;
 
-	maxRefl = 0.5;
+	maxRefl = 0.8;
 	reflDrop = 1.5;
 	permRefl = 0.3;
 }
 
-float obj::Obj3::O (float x, float y, float z)
+float obj::Floor::O (float x, float y, float z)
 {
 	return z;
 }
 
-float obj::Obj3::O_x (float x, float y, float z)
+float obj::Floor::O_x (float x, float y, float z)
 {
 	return 0;
 }
-float obj::Obj3::O_y (float x, float y, float z)
+float obj::Floor::O_y (float x, float y, float z)
 {
 	return 0;
 }
-float obj::Obj3::O_z (float x, float y, float z)
+float obj::Floor::O_z (float x, float y, float z)
 {
 	return 1;
 }

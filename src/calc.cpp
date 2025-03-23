@@ -59,6 +59,14 @@ float calc::magnitude (vec3 vec)
 }
 
 
+float calc::distance (p3 pt1, p3 pt2)
+{
+	p3 diff = pt2 - pt1;
+
+	return sqrt(diff.x * diff.x + diff.y * diff.y + diff.z * diff.z);
+}
+
+
 float calc::thetaGet (vec3 vec)
 {
 	float theta = atan2(vec.y, vec.x);
@@ -182,35 +190,64 @@ intersect calc::cast (p3 point, vec3 direction, bool doBinSearch, float maxLen)
 		traceLen += castIncLen;
 
 
+		std::vector<intersect> hitPts;
+
+		intersect closestHitPt;
+		float minDistance = maxLen; //this is the initial value to later find the minimum
+
+
+		//calculate all intersections
 		for (size_t i = 0; i < obj::objectList.size(); ++i)
 		{
 
-			obj::object* obj = obj::objectList[i];
+			obj::object* curObj = obj::objectList[i];
 
-			if (obj->O_shift(trace.x, trace.y, trace.z) < 0)
+			//check if curObj is intersected at this point
+			if (curObj->O_shift(trace.x, trace.y, trace.z) < 0)
 			{
-				//intersected an object
+
+				//yes, intersected
+
+				intersect hitPt;
+
 				if (doBinSearch)
 				{
-					return intersect
-					{
+					hitPt = {
 						true,
-						binSearch(trace - incVec, incVec, obj),
-						obj
+						binSearch(trace - incVec, incVec, curObj),
+						curObj
 					};
 				}
 				else
 				{
-
-					return intersect
-					{
+					hitPt = {
 						true,
 						trace - incVec,
-						obj
+						curObj
 					};
 				}
+
+				hitPts.push_back(hitPt);
+
+				//find the one closest to the source while going through this loop
+				float dist = distance(trace - incVec, hitPt.point);
+				if (dist < minDistance)
+				{
+					minDistance = dist;
+					closestHitPt = hitPts.back();
+				}
+
 			}
 		}
+
+
+		//if any intersections were found, this will return the one closest to the source
+		if (hitPts.size() > 0)
+		{
+			return closestHitPt;
+		}
+
+
 	}
 
 	return intersect

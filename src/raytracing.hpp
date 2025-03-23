@@ -134,13 +134,13 @@ namespace calc
 
 
 
-
 	float mod (float a, float b);
 
 	vec3 unitVec (anglePair angs);
 	vec3 unitVec (vec3 from);
 
 	float magnitude (vec3 vec);
+	float distance (p3 pt1, p3 pt2);
 
 	float thetaGet (vec3 vec);
 	float phiGet (vec3 vec);

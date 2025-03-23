@@ -73,9 +73,9 @@ namespace obj
 	void clearObjects ();
 
 
-	struct Obj1 : object
+	struct Cube1 : object
 	{
-		Obj1();
+		Cube1();
 
 		virtual float O (float, float, float);
 
@@ -85,9 +85,9 @@ namespace obj
 
 	};
 
-	struct Obj2 : object
+	struct Sphere1 : object
 	{
-		Obj2();
+		Sphere1();
 
 		virtual float O (float, float, float);
 
@@ -97,9 +97,9 @@ namespace obj
 
 	};
 
-	struct Obj3 : object
+	struct Floor : object
 	{
-		Obj3();
+		Floor();
 
 		virtual float O (float, float, float);
 
